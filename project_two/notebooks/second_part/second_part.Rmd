@@ -1,0 +1,87 @@
+---
+title: "Clustering"
+author: "Victor Hernandez"
+output: html_notebook
+---
+
+```{r}
+# add necessary libraries
+library(useful)
+library(ggplot2)
+library(dplyr)
+
+```
+```{r}
+# obtaining the data set
+data_marketing = read.csv('../../marketing_campaign.csv');
+
+# elimination of data with null values
+colsNa <- colnames(data_marketing)[!complete.cases(t(data_marketing))]
+data_marketing = data_marketing[, !names(data_marketing) %in% c(colsNa)]
+```
+```{r}
+# elimination of the following columns: Kidhome, Teenhome, Z_Revenue, Response
+data_marketing = data_marketing[, !names(data_marketing) %in% c("Kidhome", 
+                                                                "Teenhome",
+                                                                "Z_Revenue",
+                                                                "Response")]
+data_marketing
+```
+```{r}
+# data type substitution in columns
+freqMaritalStatus = data_marketing %>%
+                  group_by(Marital_Status) %>%
+                    summarise(freqval = n(), density=n()/nrow(data_marketing)) %>%
+                      arrange(freqval)
+```
+```{r}
+# elimination of rows with certain characteristics because it is less than 0.00
+data_marketing[data_marketing$Marital_Status == "Absurd" || data_marketing$Marital_Status == "YOLO" || data_marketing$Marital_Status == "Alone", ]
+```
+```{r}
+# data type substitution in columns
+freqEducation = data_marketing %>%
+                  group_by(Education) %>%
+                    summarise(freqval = n(), density=n()/nrow(data_marketing)) %>%
+                      arrange(freqval)
+```
+```{r}
+# add frequency column to eliminate the categorized qualitative column.
+data_marketing$freq_education = table(data_marketing$Education)[data_marketing$Education]
+data_marketing$freq_education = data_marketing$freq_education / nrow(data_marketing)
+```
+```{r}
+# add frequency column to eliminate the categorized qualitative column.
+data_marketing$freq_marital_status = table(data_marketing$Marital_Status)[data_marketing$Marital_Status]
+data_marketing$freq_marital_status = data_marketing$freq_marital_status / nrow(data_marketing)
+```
+```{r}
+# add frequency column to eliminate the categorized qualitative column.
+data_marketing$freq_dt_customer = table(data_marketing$Dt_Customer)[data_marketing$Dt_Customer]
+data_marketing$freq_dt_customer = data_marketing$freq_dt_customer / nrow(data_marketing)
+```
+```{r}
+# elimination of columns, since they are already categorized by density
+data_marketing = data_marketing[, !names(data_marketing) %in% c("Education", "Marital_Status", "Dt_Customer")]
+```
+```{r}
+# obtaining the ideal number of clusters
+data_frame = data.frame(matrix(ncol = 2, nrow = 0))
+colnames(data_frame) = c("k", "error")
+for(i in 2:25){
+  dataframes = kmeans(x = data_marketing, centers = i)
+  data_frame[i-1,] = c(i, dataframes$withinss)
+}
+data_frame
+```
+```{r}
+# obtaining the ideal number of clusters by means of the elbow technique
+ggplot(data=data_frame, aes(x=k, y=error)) + 
+  geom_line(linetype = "dashed") + 
+  geom_point()
+```
+```{r}
+clusters = kmeans(x=data_marketing, centers = 5)
+plot(clusters, data = data_marketing)
+```
+

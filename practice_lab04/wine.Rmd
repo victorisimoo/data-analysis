@@ -1,0 +1,42 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(useful)
+```
+
+```{r}
+wine = read.csv('../victorhernandez/Downloads/wine.data');
+wine
+```
+```{r}
+# eliminación de columna
+table(wine$Cultivar)
+wineTrain <- wine[,which(names(wine) != "Cultivar")] #todas las columnas excepto cultivar
+wineTrain
+```
+```{r}
+#obtención de los centros y la data
+wink = kmeans(x=wineTrain, centers = 5)
+wink
+```
+```{r}
+plot(wink,data=wineTrain)
+```
+```{r}
+#cantidad de clusters ideal
+df = data.frame(matrix(ncol = 2, nrow= 0))
+colnames(df) = c("k", "error")
+for(i in 2:25){
+  wink = kmeans(x=wineTrain, centers = i)
+  df[i-1,] = c(i, wink$withinss) # Agrego la suma cuadrada del error
+}
+df
+```
+```{r}
+ggplot(data=df, aes(x=k, y=error)) + 
+  geom_line(linetype = "dashed") + 
+  geom_point()
+```
+

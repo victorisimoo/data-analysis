@@ -1,0 +1,66 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+# correlación es qué tanto se relacionan dos variables entre sí = las que son menores a .6 o mayores a -.6 no me interesan. 
+# más cercanas a 1 o más cernanas a -1 (positiva lineal o negativa lineal)
+library(corrplot) 
+library(useful)
+library(ggplot2)
+library(dplyr)
+
+```
+
+```{r}
+dataset = read.csv("../class_29/test.csv")
+head(dataset)
+```
+```{r}
+table(dataset$ocean_proximity)
+prop.table(table(dataset$ocean_proximity))
+```
+```{r}
+freqEnc = dataset%>%
+                  group_by(ocean_proximity)%>%
+                    summarise(freqenc = n(), density=n()/nrow(dataset)) %>%
+                      arrange(-freqenc)
+freqEnc
+```
+```{r}
+dsTrain = merge(dataset, freqEnc, by.x="ocean_proximity", by.y="ocean_proximity")
+dsTrain
+```
+```{r}
+# cuando yo normalice una de estas columnas es normalizar todas
+library(MASS)
+datatmp = Boston
+summary(datatmp)
+```
+```{r}
+datatmp %>%
+  ggplot(aes(x=nox, y=..density..)) +
+  geom_density(col="green") +
+  geom_density(aes(x=age, y=..density..), col="red") +
+  geom_density(aes(x=dis, y=..density..), col="blue")+
+  theme_minimal()
+```
+```{r}
+datatmp$nox_std = ((datatmp$nox - mean(datatmp$nox)) / sd(datatmp$nox))
+datatmp$age_std = ((datatmp$age - mean(datatmp$age)) / sd(datatmp$age))
+datatmp$dis_std = ((datatmp$dis - mean(datatmp$dis)) / sd(datatmp$dis))
+summary(datatmp)
+```
+```{r}
+datatmp %>%
+  ggplot(aes(x=nox_std, y=..density..)) +
+  geom_density(col="green") +
+  geom_density(aes(x=age_std, y=..density..), col="red") +
+  geom_density(aes(x=dis_std, y=..density..), col="blue")+
+  theme_minimal()
+```
+```{r}
+corrplot(cor(datatmp), method = "number", type="uppe")
+```
+

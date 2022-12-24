@@ -1,0 +1,69 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+```{r}
+dataset <- read.csv("../practice_test03/train_HP.csv")
+
+colsNa <- colnames(dataset)[!complete.cases(t(dataset))]
+colsNa
+```
+```{r}
+ds_NA <- dataset %>%
+    filter(!is.na(Fence))
+ds_NA
+```
+```{r}
+incompleteData <- dataset %>% #obtnemos toda la data incompleta
+        select(colsNa)
+incompleteData
+```
+```{r}
+porcentajeNa <- as.data.frame(apply(incompleteData, 2, function(col) sum(is.na(col))/length(col))) # el dos es por la cantidad de columnas. 
+colnames(porcentajeNa) <- c("porcentajes")
+porcentajeNa
+```
+```{r}
+procesables <- porcentajeNa %>%
+                filter (porcentajes > 0.5)
+procesables
+```
+```{r}
+  dataset %>%
+    ggplot(aes(x = GrLivArea)) + 
+    geom_histogram(color="white", fill = "blue", alpha = 0.8) +
+    theme_minimal()
+```
+```{r}
+dataset$GrLivArea_media <- ifelse(dataset$GrLivArea,
+                            mean(dataset$GrLivArea, na.rm = T),
+                            dataset$GrLivArea)
+
+dataset$GrLivArea_mediana <- ifelse(dataset$GrLivArea,
+                            median(dataset$GrLivArea, na.rm = T),
+                            dataset$GrLivArea)
+
+dataset
+```
+```{r}
+dataset %>%
+    ggplot(aes(x=GrLivArea, y=..density..)) + 
+    geom_density(color="blue", alpha = 0.8) +
+    geom_density(aes(x = GrLivArea_media, y = ..density.., col = "red", alpha = 0.8))+
+    geom_density(aes(x = GrLivArea_mediana, y = ..density.., col = "green", alpha = 0.8))+
+    theme_minimal()
+    
+  
+```
+```{r}
+freaimpact <- dataset %>%
+                group_by(Neighborhood) %>%
+                  summarise(freqval = n(), desity=n()/nrow(dataset)) %>%
+                    arrange(freqval)
+freaimpact
+```
+

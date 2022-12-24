@@ -1,0 +1,89 @@
+---
+title: "R Notebook"
+author: "Victor Hernández"
+output: html_notebook
+---
+```{r}
+# Add libraries
+library(nycflights13)
+library(dplyr)
+library(ggplot2)
+```
+
+
+```{r}
+flights #fly data
+```
+
+```{r}
+glimpse(flights) # Displays information from another perspective.
+```
+```{r}
+str(flights) # Displays information from another perspective.
+```
+```{r}
+flights$carrier <- factor(flights$carrier) # to encode a vector as a factor.
+glimpse(flights)
+```
+```{r}
+dataset <-select(flights, origin, dest, flight) #select column data
+str(dataset)
+```
+```{r}
+flights %>%
+  select(ends_with("time")) #selected for the naming of the tables
+  # start_with #the variant
+```
+```{r}
+table(flights$origin) #count in the datas
+```
+```{r}
+prop.table(table(flights$origin)) #proportions
+```
+```{r}
+barplot(table(flights$origin),
+        xlab = "Aereopuerto", ylab = "Cantidad", main ="Vuelos de salida por aereopuerto", col = rainbow(3), space = c(0), ylim = c(0,150000))
+```
+```{r}
+dataset_two <- flights %>%
+                  filter(dep_delay >= 60)
+
+dataset_two
+nrow(dataset_two)
+```
+```{r}
+dataset_three <- flights%>%
+            filter(arr_delay >= 60)
+
+dataset_three
+nrow(dataset_three)
+```
+```{r}
+flights %>%
+  filter (carrier %in% c("UA", "AA"))
+```
+```{r}
+flights %>%
+  filter (hour %in% c(0:5))
+```
+```{r}
+flights <- flights %>%
+  mutate(velocity = (flights$distance / 1.605)/(flights$air_time/60)) # adds calculated columns
+glimpse(flights)
+```
+```{r}
+df.origin <- flights %>%
+    group_by(origin) %>%
+      summarise(cantidad  = n(), media = mean(arr_time, na.rm=T))
+
+df.origin
+```
+```{r}
+flights %>%
+  ggplot(aes(x=arr_delay, y=..density..))+
+    geom_density(col="red", fill="blue")+
+    xlab("minutos")+
+    ylab("densidad")+
+    theme_classic()
+```
+

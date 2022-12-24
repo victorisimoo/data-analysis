@@ -1,0 +1,37 @@
+---
+title: "Clustering"
+author: "Victor Hernandez"
+output: html_notebook
+---
+```{r}
+# add necessary libraries
+library(useful)
+library(ggplot2)
+```
+```{r}
+# obtaining the data set
+data_segmentation = read.csv('../../segmentation data.csv');
+data_segmentation = data_segmentation[, c('Education', 'Age', 'Income')]
+data_segmentation
+```
+```{r}
+# obtaining the ideal number of clusters
+data_frame = data.frame(matrix(ncol = 2, nrow = 0))
+colnames(data_frame) = c("k", "error")
+for(i in 2:25){
+  dataframes = kmeans(x = data_segmentation, centers = i)
+  data_frame[i-1,] = c(i, dataframes$withinss)
+}
+data_frame
+```
+```{r}
+# obtaining the ideal number of clusters by means of the elbow technique
+ggplot(data=data_frame, aes(x=k, y=error)) + 
+  geom_line(linetype = "dashed") + 
+  geom_point()
+```
+```{r}
+clusters = kmeans(x=data_segmentation, centers = 4)
+plot(clusters, data = data_segmentation)
+```
+

@@ -1,0 +1,111 @@
+---
+title: "R Notebook"
+author: Victor Hernández
+output: html_notebook
+---
+```{r}
+# Create gatos frame
+gatos <- data.frame(color = c("blanco", "negro", "gris"), 
+                    peso = c(1,2,3), 
+                    propietario = c(1,0,1))
+gatos
+```
+```{r}
+gatos$color
+gatos$peso
+gatos$peso + 2
+paste("el color del gato es", gatos$color)
+class(gatos$color)
+class(gatos$peso)
+```
+
+
+```{r}
+str(gatos$peso)
+str(gatos$color)
+str(gatos)
+```
+```{r}
+mi_vector = c(1,0,1)
+mi_vector
+vector_caracteres = c(2,3,6)
+vector_caracteres
+
+caracter_a_num = as.numeric(vector_caracteres)
+logic = as.logical(mi_vector)
+```
+
+
+```{r}
+gatos$propietario
+class(gatos$propietario)
+gatos$propietario = as.logical(gatos$propietario)
+gatos$propietario
+```
+
+
+```{r}
+#combinación de valores a arreglos
+ab = c("a", "b")
+ab
+abc = c(ab, "c")
+abc
+```
+```{r}
+myserie = 1:5
+myserie
+str(myserie)
+class(myserie)
+names(myserie) <- c("a", "b", "c", "d", "e")
+myserie
+```
+
+```{r}
+# list
+lista <- list(1, "AV", TRUE, 1+4i)
+lista
+otra_lista <- list(title="numbers", numbers=1:10, data=TRUE)
+otra_lista
+```
+```{r}
+# matrices
+matriz <- matrix("a",ncol=6, nrow=3)
+matriz
+class(matriz)
+typeof(matriz)
+
+# dimensions
+dim(matriz)
+```
+
+```{r}
+a<- read.csv("/Users/victorhernandez/Desktop/players_15.csv")
+a
+write.csv(a, "/Users/victorhernandez/Desktop/archivosalida.csv")
+```
+
+
+```{r}
+# vectorización
+x <- 1:4
+x*2
+y <- 6:9
+x+y
+```
+
+
+
+```{r}
+x > 2
+v <- x < 3
+v
+```
+```{r}
+r <- 1:4
+log(r)
+```
+```{r}
+m <- matrix(1:12, nrow=3, ncol=4)
+m*-1
+```
+
